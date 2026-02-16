@@ -207,12 +207,19 @@ const App = () => {
                 <div>
                   <label className="text-xs text-slate-500 block mb-2">OEM Provider</label>
                   <select value={oemFilter} onChange={handleOemChange} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm outline-none">
-                    <option>All</option>
-                    <option>Switch</option>
-                    <option>Bajaj</option>
-                    <option>Eicher</option>
-                    <option>Euler</option>
-                    <option>Mahindra</option>
+                    <option value="All">All Providers</option>
+                    <optgroup label="Live API Integration">
+                      <option value="Euler">Euler</option>
+                      <option value="Bajaj">Bajaj</option>
+                      <option value="Switch">Switch</option>
+                      <option value="Mahindra">Mahindra</option>
+                      <option value="Volvo Eicher">Volvo Eicher</option>
+                    </optgroup>
+                    <optgroup label="No API Integration (Offline)">
+                      <option value="Altigreen">Altigreen</option>
+                      <option value="Piaggio">Piaggio</option>
+                      <option value="Tata">Tata</option>
+                    </optgroup>
                   </select>
                 </div>
 
@@ -261,25 +268,31 @@ const App = () => {
                           <td className="px-6 py-4 font-mono text-sm text-blue-400">{v.vehicle_id}</td>
                           <td className="px-6 py-4 text-sm font-medium">{v.oem}</td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${v.status === 'Communicating' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                              {v.status}
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${v.status === 'Communicating' ? 'bg-green-500/10 text-green-400' :
+                              (v.details?.status === 'No API Integration' ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-400')
+                              }`}>
+                              {v.details?.status === 'No API Integration' ? 'Offline' : v.status}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-sm">
-                            {v.status === 'Communicating' && v.days_inactive === 0 ? (
-                              <span className="text-green-400 font-bold">Today</span>
+                            {v.details?.status === 'No API Integration' ? (
+                              <span className="text-slate-500 font-mono text-xs">NoAPI</span>
                             ) : (
-                              <span className={v.days_inactive > 7 ? 'text-red-400 font-bold' : 'text-orange-400'}>
-                                {v.days_inactive === 0 && v.last_updated ? (
-                                  (() => {
-                                    const diff = new Date().getTime() - new Date(v.last_updated).getTime();
-                                    const hours = Math.floor(diff / (1000 * 60 * 60));
-                                    return `${hours} hours ago`;
-                                  })()
-                                ) : (
-                                  `${v.days_inactive} days`
-                                )}
-                              </span>
+                              v.status === 'Communicating' && v.days_inactive === 0 ? (
+                                <span className="text-green-400 font-bold">Today</span>
+                              ) : (
+                                <span className={v.days_inactive > 7 ? 'text-red-400 font-bold' : 'text-orange-400'}>
+                                  {v.days_inactive === 0 && v.last_updated ? (
+                                    (() => {
+                                      const diff = new Date().getTime() - new Date(v.last_updated).getTime();
+                                      const hours = Math.floor(diff / (1000 * 60 * 60));
+                                      return `${hours} hours ago`;
+                                    })()
+                                  ) : (
+                                    `${v.days_inactive} days`
+                                  )}
+                                </span>
+                              )
                             )}
                           </td>
                           <td className="px-6 py-4 text-right">
