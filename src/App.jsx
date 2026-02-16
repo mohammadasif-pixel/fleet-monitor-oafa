@@ -164,7 +164,7 @@ const App = () => {
           </h1>
           <p className="text-slate-500 flex items-center gap-2">
             <Activity className="w-4 h-4 text-primary-500" />
-            Synchronized every 30 mins
+            Synchronized every 30 mins (v2.1 Strict Mode)
           </p>
         </div>
 
