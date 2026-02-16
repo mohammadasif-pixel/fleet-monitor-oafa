@@ -39,7 +39,7 @@ const App = () => {
   // Filters
   const [oemFilter, setOemFilter] = useState('All');
   const [search, setSearch] = useState('');
-  const [statusTab, setStatusTab] = useState('All');
+  const [statusTab, setStatusTab] = useState('Communicating');
   const [limit] = useState(50);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
 
@@ -188,10 +188,11 @@ const App = () => {
       </header>
 
       {/* Summary Cards */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         <Card title="Total Fleet" value={summary?.total_vehicles || 0} icon={<Truck className="w-6 h-6 text-blue-400" />} gradient="from-blue-500/10 to-transparent" />
         <Card title="Communicating" value={summary?.communicating_count || 0} icon={<CheckCircle2 className="w-6 h-6 text-green-400" />} gradient="from-green-500/10 to-transparent" sub="Syncing Today" />
-        <Card title="Non-Communicating (> 24h)" value={summary?.non_communicating_count || 0} icon={<AlertCircle className="w-6 h-6 text-red-400" />} gradient="from-red-500/10 to-transparent" sub="Back-dated / Missing" />
+        <Card title="Non-Communicating (Live)" value={summary?.silent_count || 0} icon={<AlertCircle className="w-6 h-6 text-red-500" />} gradient="from-red-500/10 to-transparent" sub="Missing Data" />
+        <Card title="No API Integration" value={summary?.offline_count || 0} icon={<Database className="w-6 h-6 text-slate-400" />} gradient="from-slate-500/10 to-transparent" sub="Static Inventory" />
       </div>
 
       <main className="max-w-7xl mx-auto">
@@ -244,7 +245,8 @@ const App = () => {
               <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-slate-800">
                 <TabButton active={statusTab === 'All'} onClick={() => handleStatusChange('All')} label="All" />
                 <TabButton active={statusTab === 'Communicating'} onClick={() => handleStatusChange('Communicating')} label="Communicating" color="green" />
-                <TabButton active={statusTab === 'Non-Communicating'} onClick={() => handleStatusChange('Non-Communicating')} label="Non-Communicating (> 24h)" color="red" />
+                <TabButton active={statusTab === 'Non-Communicating'} onClick={() => handleStatusChange('Non-Communicating')} label="Non-Communicating" color="red" />
+                <TabButton active={statusTab === 'No API'} onClick={() => handleStatusChange('No API')} label="No API" color="slate" />
               </div>
               <div className="text-xs text-slate-500 font-mono">Found: {total} vehicles</div>
             </div>
@@ -271,12 +273,12 @@ const App = () => {
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${v.status === 'Communicating' ? 'bg-green-500/10 text-green-400' :
                               (v.details?.status === 'No API Integration' ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-400')
                               }`}>
-                              {v.details?.status === 'No API Integration' ? 'Offline' : v.status}
+                              {v.details?.status === 'No API Integration' ? 'No API' : (v.status === 'Communicating' ? 'Online' : 'Offline')}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-sm">
                             {v.details?.status === 'No API Integration' ? (
-                              <span className="text-slate-500 font-mono text-xs">NoAPI</span>
+                              <span className="text-slate-500 font-mono text-xs">STATIC</span>
                             ) : (
                               v.status === 'Communicating' && v.days_inactive === 0 ? (
                                 <span className="text-green-400 font-bold">Today</span>
