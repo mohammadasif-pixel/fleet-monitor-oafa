@@ -26,7 +26,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE = window.location.hostname === 'localhost'
   ? 'http://localhost:9000/oem/can-health'
-  : 'https://appsail-50038078666.development.catalystappsail.in/oem/can-health';
+  : 'https://can-health-api.onrender.com/oem/can-health';
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -578,6 +578,15 @@ const App = () => {
           <button onClick={() => fetchData()} className="px-3 py-1 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs font-bold transition-all">
             Retry
           </button>
+        </div>
+      )}
+
+      {/* Blocking Loader for Refresh */}
+      {forceRefreshing && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
+          <RefreshCw className="w-16 h-16 text-blue-500 animate-spin mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Syncing Data...</h2>
+          <p className="text-slate-400 text-sm">Fetching latest telemetry from all OEMs</p>
         </div>
       )}
     </div>
