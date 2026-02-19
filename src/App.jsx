@@ -24,7 +24,9 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE = 'http://localhost:9000/oem/can-health';
+const API_BASE = window.location.hostname === 'localhost'
+  ? 'http://localhost:9000/oem/can-health'
+  : 'https://appsail-50038078666.development.catalystappsail.in/oem/can-health';
 
 const App = () => {
   const [items, setItems] = useState([]);
